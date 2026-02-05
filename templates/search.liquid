@@ -1,6 +1,12 @@
 {% paginate search.results by 10 %}
-  <form action="/search" method="get" role="search">
-    <input type="search" name="q" value="{{ search.terms | escape }}">
+  <form
+    action="/search"
+    method="get"
+    role="search">
+    <input
+      type="search"
+      name="q"
+      value="{{ search.terms | escape }}">
     <button type="submit">search</button>
   </form>
 
@@ -18,5 +24,6 @@
     {% endfor %}
   {% endif %}
 
-  {% if paginate.pages > 1 %}{{ paginate | default_pagination }}{% endif %}
+  {% if paginate.pages > 1 %}
+    {{ paginate | default_pagination }}{% endif %}
 {% endpaginate %}

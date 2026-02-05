@@ -1,0 +1,94 @@
+{
+  "@context": "https://a2a.dev/context/v1",
+  "@type": "Agent",
+  "id": "{{ shop.permanent_domain }}",
+  "name": "{{ shop.name }} Shopping Agent",
+  "description": "AI-powered shopping assistant for {{ shop.name }}",
+  "version": "1.0.0",
+  "capabilities": [
+    "product_search",
+    "product_recommendations",
+    "cart_management",
+    "order_information",
+    "customer_support"
+  ],
+  "protocols": {
+    "ucp": {
+      "version": "2026-01-11",
+      "endpoint": "{{ shop.url }}/.well-known/ucp.json"
+    },
+    "a2a": {
+      "version": "2026-01-11",
+      "supported": true
+    }
+  },
+  "services": [
+    {
+      "type": "shopping",
+      "name": "Product Catalog",
+      "description": "Browse and search product catalog",
+      "endpoint": "{{ shop.url }}/collections/all/products.json",
+      "methods": ["GET"],
+      "format": "application/json"
+    },
+    {
+      "type": "shopping",
+      "name": "Product Details",
+      "description": "Get detailed product information",
+      "endpoint": "{{ shop.url }}/products/{handle}.json",
+      "methods": ["GET"],
+      "format": "application/json",
+      "parameters": {
+        "handle": {
+          "type": "string",
+          "description": "Product handle/slug",
+          "required": true
+        }
+      }
+    },
+    {
+      "type": "cart",
+      "name": "Shopping Cart",
+      "description": "Manage shopping cart",
+      "endpoint": "{{ shop.url }}/cart.json",
+      "methods": ["GET", "POST"],
+      "format": "application/json"
+    },
+    {
+      "type": "search",
+      "name": "Product Search",
+      "description": "Search for products",
+      "endpoint": "{{ shop.url }}/search/suggest.json",
+      "methods": ["GET"],
+      "format": "application/json",
+      "parameters": {
+        "q": {
+          "type": "string",
+          "description": "Search query",
+          "required": true
+        }
+      }
+    }
+  ],
+  "schema": {
+    "types": [
+      "Product",
+      "Offer",
+      "Brand",
+      "Organization",
+      "Order",
+      "ItemList"
+    ],
+    "format": "application/ld+json",
+    "vocabulary": "https://schema.org"
+  },
+  "contact": {
+    "email": "{{ shop.email }}",
+    "url": "{{ shop.url }}/pages/contact"
+  },
+  "policies": {
+    "privacy": "{{ shop.url }}/policies/privacy-policy",
+    "terms": "{{ shop.url }}/policies/terms-of-service",
+    "refund": "{{ shop.url }}/policies/refund-policy"
+  }
+}

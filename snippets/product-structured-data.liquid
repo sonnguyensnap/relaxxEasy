@@ -1,0 +1,91 @@
+{% comment %}
+  Product Structured Data for AI Agents (Google Gemini, ChatGPT, etc.)
+  Uses Schema.org Product vocabulary in JSON-LD format
+
+  Parameters:
+  - product: The product object
+{% endcomment %}
+
+{% if product %}
+  {% assign current_variant = product.selected_or_first_available_variant %}
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": "{{ shop.url }}{{ product.url }}",
+    "name": {{ product.title | json }},
+    "description": {{ product.description | strip_html | json }},
+    "url": "{{ shop.url }}{{ product.url }}",
+    "sku": "{{ current_variant.sku | default: current_variant.id }}",
+    "productID": "{{ product.id }}",
+    {% if product.featured_image %}
+    "image": [
+      "{{ product.featured_image | image_url: width: 2048 }}"
+      {% if product.images.size > 1 %}
+        {% for image in product.images limit: 10 offset: 1 %}
+          ,"{{ image | image_url: width: 2048 }}"
+        {% endfor %}
+      {% endif %}
+    ],
+    {% endif %}
+    {% if product.vendor %}
+    "brand": {
+      "@type": "Brand",
+      "name": {{ product.vendor | json }}
+    },
+    {% endif %}
+    "offers": {
+      "@type": "Offer",
+      "url": "{{ shop.url }}{{ product.url }}",
+      "priceCurrency": {{ cart.currency.iso_code | json }},
+      "price": "{{ current_variant.price | money_without_currency | remove: ',' }}",
+      "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' }}",
+      "availability": "{% if current_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+      "itemCondition": "https://schema.org/NewCondition",
+      "seller": {
+        "@type": "Organization",
+        "name": {{ shop.name | json }},
+        "url": "{{ shop.url }}"
+      }
+    },
+    {% if current_variant.barcode != blank %}
+    "gtin": "{{ current_variant.barcode }}",
+    {% endif %}
+    {% if current_variant.weight %}
+    "weight": {
+      "@type": "QuantitativeValue",
+      "value": "{{ current_variant.weight }}",
+      "unitCode": "{{ current_variant.weight_unit }}"
+    },
+    {% endif %}
+    {% if product.type != blank %}
+    "category": {{ product.type | json }},
+    {% endif %}
+    {% if product.tags.size > 0 %}
+    "keywords": {{ product.tags | join: ', ' | json }},
+    {% endif %}
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Product Type",
+        "value": {{ product.type | json }}
+      }
+      {% if current_variant.title != 'Default Title' %}
+      ,{
+        "@type": "PropertyValue",
+        "name": "Variant",
+        "value": {{ current_variant.title | json }}
+      }
+      {% endif %}
+      {% for option in product.options_with_values %}
+      ,{
+        "@type": "PropertyValue",
+        "name": {{ option.name | json }},
+        "value": {{ current_variant.options[forloop.index0] | json }}
+      }
+      {% endfor %}
+    ]
+  }
+  </script>
+{% endif %}

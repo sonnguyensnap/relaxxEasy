@@ -1,0 +1,116 @@
+{
+  "@context": "https://ucp.dev/context/v1",
+  "ucp": {
+    "version": "2026-01-11",
+    "ai_readable": true,
+    "supported_agents": [
+      "google-gemini",
+      "openai-chatgpt",
+      "anthropic-claude",
+      "generic-llm"
+    ],
+    "merchant": {
+      "name": "relaxxEasy Store",
+      "description": "Shopify store with AI-readable product catalog via Universal Commerce Protocol",
+      "url": "{{ shop.url }}",
+      "contact": {
+        "email": "{{ shop.email }}"
+      }
+    },
+    "services": {
+      "dev.ucp.shopping": {
+        "version": "2026-01-11",
+        "spec": "https://ucp.dev/specs/shopping",
+        "enabled": true,
+        "endpoints": {
+          "catalog": "{{ shop.url }}/collections/all/products.json",
+          "product": "{{ shop.url }}/products/{handle}.json",
+          "cart": "{{ shop.url }}/cart.json"
+        }
+      }
+    },
+    "capabilities": [
+      {
+        "name": "dev.ucp.shopping.catalog",
+        "version": "2026-01-11",
+        "spec": "https://ucp.dev/specs/shopping/catalog",
+        "schema": "https://schema.org/Product",
+        "enabled": true,
+        "description": "Browse product catalog with Schema.org structured data"
+      },
+      {
+        "name": "dev.ucp.shopping.checkout",
+        "version": "2026-01-11",
+        "spec": "https://ucp.dev/specs/shopping/checkout",
+        "schema": "https://schema.org/Order",
+        "enabled": true,
+        "description": "Shopping cart and checkout functionality",
+        "endpoints": {
+          "add_to_cart": "{{ shop.url }}/cart/add.js",
+          "update_cart": "{{ shop.url }}/cart/update.js",
+          "checkout": "{{ shop.url }}/checkout"
+        }
+      },
+      {
+        "name": "dev.ucp.shopping.search",
+        "version": "2026-01-11",
+        "spec": "https://ucp.dev/specs/shopping/search",
+        "enabled": true,
+        "description": "Product search functionality",
+        "endpoints": {
+          "search": "{{ shop.url }}/search?q={query}&type=product"
+        }
+      }
+    ],
+    "formats": {
+      "structured_data": [
+        "application/ld+json",
+        "schema.org"
+      ],
+      "api": [
+        "application/json"
+      ]
+    },
+    "ai_integration": {
+      "structured_data_locations": {
+        "product_pages": "All product pages include Schema.org Product markup in JSON-LD",
+        "collection_pages": "Collection pages include Schema.org ItemList markup in JSON-LD",
+        "organization": "All pages include Schema.org Organization and WebSite markup",
+        "format": "application/ld+json embedded in <script type='application/ld+json'> tags"
+      },
+      "data_fields": {
+        "product": [
+          "name",
+          "description",
+          "url",
+          "image",
+          "brand",
+          "price",
+          "priceCurrency",
+          "availability",
+          "sku",
+          "gtin",
+          "category",
+          "keywords"
+        ],
+        "collection": [
+          "name",
+          "description",
+          "url",
+          "numberOfItems",
+          "itemListElement"
+        ]
+      },
+      "instructions_for_ai": "To access product information: 1) Fetch any product page URL, 2) Parse the <script type='application/ld+json'> tags containing Schema.org Product data, 3) Extract structured information in JSON format. All products follow Schema.org Product vocabulary."
+    },
+    "features": {
+      "product_variants": true,
+      "inventory_tracking": true,
+      "multi_currency": true,
+      "collections": true,
+      "search": true,
+      "cart": true,
+      "checkout": true
+    }
+  }
+}

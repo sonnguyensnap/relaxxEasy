@@ -7,11 +7,20 @@
     <meta name="description" content="{{ page_description | escape }}">
     <link rel="canonical" href="{{ canonical_url }}">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+    {% comment %} UCP and AI Agent Support {% endcomment %}
+    <meta name="ucp-version" content="2026-01-11">
+    <meta name="ai-readable" content="true">
+    <link rel="alternate" type="application/ld+json" href="{{ shop.url }}/.well-known/ucp.json">
+
   {{ content_for_header }}
     <!-- Header hook for plugins -->
     {{ 'application.css' | asset_url | stylesheet_tag }}
-    {{ 'application.js' | asset_url | script_tag }}
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="{{ 'application.js' | asset_url }}" defer></script>
+    <script src="{{ 'cdn.min.js' | asset_url }}" defer></script>
+
+    {% comment %} Organization & WebSite Structured Data for AI Agents {% endcomment %}
+    {% render 'organization-structured-data' %}
   </head>
   <body>
     {% section 'header' %}
